@@ -2,11 +2,9 @@ package pro.skyjava.course2.examiner.service.impl;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import pro.skyjava.course2.examiner.domain.Question;
 import pro.skyjava.course2.examiner.service.QuestionService;
 
-import java.util.List;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
