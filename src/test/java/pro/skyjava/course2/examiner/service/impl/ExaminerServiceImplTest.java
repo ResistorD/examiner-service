@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import pro.skyjava.course2.examiner.domain.Question;
 import pro.skyjava.course2.examiner.service.QuestionService;
 
+import java.util.List;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -24,7 +25,7 @@ class ExaminerServiceImplTest {
     @BeforeEach
     void setUp() {
         questionService = mock(QuestionService.class);
-        examinerService = new ExaminerServiceImpl(questionService);
+        examinerService = new ExaminerServiceImpl(List.of(questionService));
     }
 
     @Test

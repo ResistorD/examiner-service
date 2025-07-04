@@ -12,23 +12,29 @@ import java.util.*;
 @Service
 public class ExaminerServiceImpl implements ExaminerService {
 
-    private final QuestionService questionService;
+    private final List<QuestionService> questionServices;
 
-    public ExaminerServiceImpl(QuestionService questionService) {
-        this.questionService = questionService;
+    public ExaminerServiceImpl(List<QuestionService> questionServices) {
+        this.questionServices = questionServices;
     }
 
     @Override
-    public Collection<Question> getQuestions(int amount) {
-        int available = questionService.getAll().size();
+    public Set<Question> getQuestions(int amount) {
+        int totalAvailable = questionServices.stream()
+                .mapToInt(s -> s.getAll().size())
+                .sum();
 
-        if (amount > available) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Запрошено больше вопросов, чем есть в хранилище");
+        if (amount > totalAvailable) {
+            throw new IllegalArgumentException("Запрошено больше вопросов, чем есть в базе");
         }
 
         Set<Question> result = new HashSet<>();
+        Random random = new Random();
+
         while (result.size() < amount) {
-            result.add(questionService.getRandomQuestion());
+            QuestionService service = questionServices.get(random.nextInt(questionServices.size()));
+            Question question = service.getRandomQuestion();
+            result.add(question);
         }
 
         return result;
