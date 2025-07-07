@@ -1,8 +1,6 @@
 package pro.skyjava.course2.examiner.service.impl;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 import pro.skyjava.course2.examiner.domain.Question;
 import pro.skyjava.course2.examiner.service.ExaminerService;
 import pro.skyjava.course2.examiner.service.QuestionService;
@@ -13,6 +11,7 @@ import java.util.*;
 public class ExaminerServiceImpl implements ExaminerService {
 
     private final List<QuestionService> questionServices;
+    private final Random random = new Random();
 
     public ExaminerServiceImpl(List<QuestionService> questionServices) {
         this.questionServices = questionServices;
@@ -20,18 +19,19 @@ public class ExaminerServiceImpl implements ExaminerService {
 
     @Override
     public Set<Question> getQuestions(int amount) {
-        int totalAvailable = questionServices.stream()
-                .mapToInt(s -> s.getAll().size())
-                .sum();
-
-        if (amount > totalAvailable) {
-            throw new IllegalArgumentException("Запрошено больше вопросов, чем есть в базе");
+        if (questionServices.isEmpty()) {
+            throw new IllegalStateException("Нет доступных сервисов вопросов.");
         }
 
         Set<Question> result = new HashSet<>();
-        Random random = new Random();
+
+        int safetyLimit = amount * 10; // на случай генераторов с ограниченным разнообразием
+        int attempts = 0;
 
         while (result.size() < amount) {
+            if (attempts++ > safetyLimit) {
+                throw new IllegalArgumentException("Невозможно сгенерировать достаточно уникальных вопросов.");
+            }
             QuestionService service = questionServices.get(random.nextInt(questionServices.size()));
             Question question = service.getRandomQuestion();
             result.add(question);

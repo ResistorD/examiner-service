@@ -2,53 +2,38 @@ package pro.skyjava.course2.examiner.service.impl;
 
 import org.springframework.stereotype.Service;
 import pro.skyjava.course2.examiner.domain.Question;
+import pro.skyjava.course2.examiner.exception.MethodNotAllowedException;
 import pro.skyjava.course2.examiner.service.QuestionService;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Random;
 
-@Service
+@Service("mathQuestionService")
 public class MathQuestionService implements QuestionService {
 
-    private final Set<Question> questions = new HashSet<>();
     private final Random random = new Random();
-
-    public MathQuestionService() {
-        questions.add(new Question("2 + 2", "4"));
-        questions.add(new Question("5 * 6", "30"));
-        questions.add(new Question("10 - 3", "7"));
-        questions.add(new Question("9 / 3", "3"));
-        questions.add(new Question("√16", "4"));
-    }
 
     @Override
     public Question add(String question, String answer) {
-        Question q = new Question(question, answer);
-        questions.add(q);
-        return q;
+        throw new MethodNotAllowedException("Добавление математических вопросов не поддерживается");
     }
 
     @Override
     public Question remove(String question, String answer) {
-        Question q = new Question(question, answer);
-        if (!questions.remove(q)) {
-            throw new IllegalArgumentException("Вопрос не найден: " + q);
-        }
-        return q;
+        throw new MethodNotAllowedException("Удаление математических вопросов не поддерживается");
     }
 
     @Override
     public Collection<Question> getAll() {
-        return Collections.unmodifiableSet(questions);
+        throw new MethodNotAllowedException("Просмотр всех математических вопросов не поддерживается");
     }
 
     @Override
     public Question getRandomQuestion() {
-        if (questions.isEmpty()) {
-            throw new IllegalStateException("Нет доступных вопросов.");
-        }
-        return questions.stream()
-                .skip(random.nextInt(questions.size()))
-                .findFirst()
-                .orElseThrow();
+        int a = random.nextInt(10) + 1;
+        int b = random.nextInt(10) + 1;
+        String question = a + " + " + b;
+        String answer = String.valueOf(a + b);
+        return new Question(question, answer);
     }
 }
